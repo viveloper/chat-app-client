@@ -32,12 +32,15 @@ const Chat = ({ location }) => {
   }, [ENDPOINT, location.search]);
 
   useEffect(() => {
-    socket.off('message');
     socket.on('message', message => {
-      console.log(messages);
-      setMessages([...messages, message]);
+      setMessages(prevMessages => {
+        return [...prevMessages, message];
+      });
     });
-  }, [messages]);
+    return () => {
+      socket.off('message');
+    };
+  }, []);
 
   const sendMessage = e => {
     if (message) {
